@@ -10,12 +10,12 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     // LẤY DANH SÁCH NGƯỜI DÙNG
     case 'GET':
-        $sql = "SELECT ma_nd, ho_ten, email, so_dien_thoai, dia_chi, vai_tro, ngay_dang_ky FROM nguoi_dung";
-        $result = $conn->query($sql);
-        $data = [];
-        while ($row = $result->fetch_assoc()) $data[] = $row;
-        echo json_encode($data);
-        break;
+    $sql = "SELECT ma_nd, ho_ten, email, mat_khau, so_dien_thoai, dia_chi, vai_tro, ngay_dang_ky FROM nguoi_dung";
+    $result = $conn->query($sql);
+    $data = [];
+    while ($row = $result->fetch_assoc()) $data[] = $row;
+    echo json_encode($data);
+    break;
 
     // THÊM NGƯỜI DÙNG
     case 'POST':

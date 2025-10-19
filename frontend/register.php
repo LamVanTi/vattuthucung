@@ -169,31 +169,42 @@ session_start();
   </div>
 
   <script>
-    document.getElementById('registerForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      const formData = {
-        ho_ten: this.ho_ten.value,
-        email: this.email.value,
-        mat_khau: this.mat_khau.value,
-        so_dien_thoai: this.so_dien_thoai.value,
-        dia_chi: this.dia_chi.value,
-        vai_tro: "user"
-      };
+  document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-      const res = await fetch('../backend/api/user_api.php', {
+    const userData = {
+      ho_ten: this.ho_ten.value.trim(),
+      email: this.email.value.trim(),
+      mat_khau: this.mat_khau.value.trim(),
+      so_dien_thoai: this.so_dien_thoai.value.trim(),
+      dia_chi: this.dia_chi.value.trim(),
+      vai_tro: "user"
+    };
+
+    // Gửi dữ liệu tới API người dùng
+    try {
+      const response = await fetch('../backend/api/user_api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
       });
 
-      const data = await res.json();
-      if(data.success){
-        alert('Đăng ký thành công 🎉');
-        window.location.href = 'login.php';
+      const result = await response.json();
+
+      if (result.success) {
+        alert("🎉 Đăng ký thành công! Vui lòng đăng nhập.");
+        window.location.href = "login.php";
       } else {
-        alert('Đăng ký thất bại 😢');
+        alert("❌ Đăng ký thất bại. Vui lòng kiểm tra lại thông tin!");
       }
-    });
-  </script>
+
+    } catch (error) {
+      console.error('Lỗi:', error);
+      alert("⚠️ Không thể kết nối máy chủ. Vui lòng thử lại sau!");
+    }
+  });
+</script>
 </body>
 </html>

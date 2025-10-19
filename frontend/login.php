@@ -22,7 +22,6 @@
       align-items: center;
       overflow: hidden;
     }
-    /* Hiệu ứng background động */
     .bg-paw {
         position: absolute;
         width: 100%;
@@ -32,7 +31,6 @@
         left: 0;
         z-index: -1;
     }
-
     .bg-paw i {
         position: absolute;
         color: rgba(255, 255, 255, 0.3);
@@ -40,7 +38,6 @@
         animation: pawMove 10s linear infinite;
         bottom: -100px;
     }
-
     .bg-paw i:nth-child(1){ left: 10%; font-size: 50px; animation-delay: 0s; }
     .bg-paw i:nth-child(2){ left: 25%; font-size: 30px; animation-delay: 5s; }
     .bg-paw i:nth-child(3){ left: 40%; font-size: 60px; animation-delay: 2s; animation-duration: 20s; }
@@ -56,7 +53,6 @@
         0% { transform: translateY(0) rotate(0deg); opacity: 1; }
         100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
     }
-
 
     .login-card {
       background: rgba(255, 255, 255, 0.9);
@@ -92,62 +88,68 @@
 <body>
   
 <!-- NỀN HIỆU ỨNG BÀN CHÂN -->
-    <div class="bg-paw">
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-        <i class="fa-solid fa-paw"></i>
-    </div>
+<div class="bg-paw">
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+  <i class="fa-solid fa-paw"></i>
+</div>
 
-  <div class="login-card">
-    <h3><i class="fa-solid fa-paw"></i> PetSupply Login </h3>
-    <form id="loginForm">
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
-      </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Mật khẩu</label>
-        <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu..." required>
-      </div>
-      <button type="submit" class="btn btn-login">Đăng nhập</button>
-    </form>
-    <div class="text-center mt-3">
-      <a href="register.php" class="text-decoration-none">Chưa có tài khoản? Đăng ký</a>
+<div class="login-card">
+  <h3><i class="fa-solid fa-paw"></i> PetSupply Login</h3>
+  <form id="loginForm">
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" id="email" class="form-control" placeholder="Nhập email..." required>
     </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Mật khẩu</label>
+      <input type="password" id="mat_khau" class="form-control" placeholder="Nhập mật khẩu..." required>
+    </div>
+    <button type="submit" class="btn btn-login">Đăng nhập</button>
+  </form>
+  <div class="text-center mt-3">
+    <a href="register.php" class="text-decoration-none">Chưa có tài khoản? Đăng ký</a>
   </div>
+</div>
 
-  <script>
-    const API_LOGIN = "http://localhost/vattuthucung/backend/api/user_api.php?action=login";
+<script>
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    document.getElementById('loginForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
+    const email = document.getElementById("email").value.trim();
+    const mat_khau = document.getElementById("mat_khau").value.trim();
 
-      const res = await fetch(API_LOGIN, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, mat_khau: password })
-      });
+    try {
+      // 🔗 Đường dẫn API — chỉnh lại tùy cấu trúc thư mục
+      const res = await fetch("../backend/api/user_api.php");
+      if (!res.ok) throw new Error("Không thể kết nối đến máy chủ!");
 
-      const data = await res.json();
-      console.log(data);
+      const users = await res.json();
+      console.log("Dữ liệu trả về:", users);
 
-      if(data.success){
-        alert("Đăng nhập thành công 🎉");
-        localStorage.setItem('user', JSON.stringify(data.user));
+      const user = users.find(u => u.email === email && u.mat_khau === mat_khau);
+
+      if (user) {
+        alert("🎉 Đăng nhập thành công!");
+        localStorage.setItem("user", JSON.stringify(user));
+        // 👉 Chuyển đến trang index
         window.location.href = "index.php";
       } else {
-        alert(data.message || "Sai thông tin đăng nhập ❌");
+        alert("❌ Sai email hoặc mật khẩu!");
       }
-    });
-  </script>
+    } catch (err) {
+      console.error(err);
+      alert("⚠️ Không thể kết nối tới API. Kiểm tra đường dẫn hoặc server!");
+    }
+  });
+</script>
+
 </body>
 </html>
