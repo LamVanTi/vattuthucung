@@ -91,7 +91,8 @@ const apiUrl = "../../backend/api/product_api.php";
           <td>${p.so_luong}</td>
           <td>${p.loai_sp || ""}</td>
           <td>${p.thuong_hieu || ""}</td>
-          <td><img src="../../backend/images/${p.hinh_anh || 'no_image.png'}" width="50" height="50"></td>
+          <td><img src="../uploads/${p.hinh_anh || 'no_image.png'}" width="50" height="50">
+</td>
           <td>${p.ngay_tao || ""}</td>
           <td>
             <button class="btn btn-sm btn-warning" onclick='editProduct(${JSON.stringify(p)})'>Sửa</button>

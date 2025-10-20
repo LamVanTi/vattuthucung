@@ -83,6 +83,7 @@ session_start();
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  // Hiệu ứng cuộn mượt
   const elements = document.querySelectorAll('[data-animate]');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
@@ -91,32 +92,56 @@ document.addEventListener("DOMContentLoaded", () => {
   }, { threshold: 0.2 });
   elements.forEach(el => observer.observe(el));
 
-  axios.get('api/product_api.php')
+  // 🔹 Lấy danh sách sản phẩm từ backend
+  axios.get('../backend/api/product_api.php')
     .then(res => {
+      console.log("📦 Dữ liệu trả về từ API:", res.data);
       const data = res.data;
       const productList = document.getElementById('product-list');
+
       if (!Array.isArray(data) || data.length === 0) {
         productList.innerHTML = `<p class="text-center text-muted">Không có sản phẩm nào để hiển thị.</p>`;
         return;
       }
-      productList.innerHTML = data.map(sp => `
+
+      // ✅ Hiển thị danh sách sản phẩm
+      productList.innerHTML = data.map(sp => {
+        // Nếu API trả về đường dẫn tương đối (VD: assets/uploads/img1.jpg)
+        // thì không cần thêm gì nữa
+        let imgPath = sp.hinh_anh;
+
+        // Nếu API trả về chỉ tên file (VD: dogfood.jpg)
+        // thì thêm đường dẫn đầy đủ
+        if (!sp.hinh_anh.includes("assets/uploads/")) {
+          imgPath = `assets/uploads/${sp.hinh_anh}`;
+        }
+
+        // Nếu không có hình ảnh -> dùng ảnh mặc định
+        if (!sp.hinh_anh) {
+          imgPath = `assets/uploads/no_image.png`;
+        }
+
+        return `
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-animate>
           <div class="card product-card h-100 shadow-sm">
-            <img src="\${sp.hinh_anh}" class="card-img-top" alt="\${sp.ten_sp}">
+            <img src="${imgPath}" class="card-img-top" alt="${sp.ten_sp}" onerror="this.src='assets/uploads/no_image.png'">
             <div class="card-body d-flex flex-column">
-              <h5 class="card-title text-truncate">\${sp.ten_sp}</h5>
-              <p class="text-danger fw-bold mb-3">\${Number(sp.gia).toLocaleString()} đ</p>
-              <a href="product_detail.php?id=\${sp.ma_sp}" class="btn btn-primary mt-auto">Xem chi tiết</a>
+              <h5 class="card-title text-truncate">${sp.ten_sp}</h5>
+              <p class="text-danger fw-bold mb-3">${Number(sp.gia).toLocaleString()} đ</p>
+              <a href="product_detail.php?id=${sp.ma_sp}" class="btn btn-primary mt-auto">Xem chi tiết</a>
             </div>
           </div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
     })
     .catch(err => {
-      console.error("Lỗi tải sản phẩm:", err);
-      document.getElementById('product-list').innerHTML = `<p class="text-danger text-center">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>`;
+      console.error("❌ Lỗi tải sản phẩm:", err);
+      document.getElementById('product-list').innerHTML =
+        `<p class="text-danger text-center">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>`;
     });
 });
 </script>
+
 
 </body>
 </html>

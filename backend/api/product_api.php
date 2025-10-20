@@ -4,7 +4,6 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
 
-
 include '../db.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -28,10 +27,17 @@ switch ($method) {
 
         $data = [];
         while ($row = $result->fetch_assoc()) {
-            // Nếu hình ảnh không chứa 'uploads/', tự thêm vào
-            if (!empty($row['hinh_anh']) && strpos($row['hinh_anh'], 'uploads/') === false) {
-                $row['hinh_anh'] = 'uploads/' . $row['hinh_anh'];
+            // Nếu có hình ảnh
+            if (!empty($row['hinh_anh'])) {
+                // Nếu chưa có tiền tố 'frontend/assets/uploads/', thêm vào
+                if (strpos($row['hinh_anh'], 'frontend/assets/uploads/') === false) {
+                    $row['hinh_anh'] = '../../frontend/assets/uploads/' . $row['hinh_anh'];
+                }
+            } else {
+                // Nếu không có hình ảnh, dùng ảnh mặc định
+                $row['hinh_anh'] = '../../frontend/assets/uploads/no_image.png';
             }
+
             $data[] = $row;
         }
 
@@ -61,9 +67,10 @@ switch ($method) {
 
         $stmt->bind_param("ssdiiss", $ten_sp, $mo_ta, $gia, $so_luong, $loai_sp, $thuong_hieu, $hinh_anh);
 
+        $success = $stmt->execute();
         echo json_encode([
-            "success" => $stmt->execute(),
-            "message" => $stmt->execute() ? "Thêm sản phẩm thành công" : "Lỗi khi thêm sản phẩm: " . $stmt->error
+            "success" => $success,
+            "message" => $success ? "Thêm sản phẩm thành công" : "Lỗi khi thêm sản phẩm: " . $stmt->error
         ]);
         break;
 
@@ -97,9 +104,10 @@ switch ($method) {
 
         $stmt->bind_param("ssdiissi", $ten_sp, $mo_ta, $gia, $so_luong, $loai_sp, $thuong_hieu, $hinh_anh, $ma_sp);
 
+        $success = $stmt->execute();
         echo json_encode([
-            "success" => $stmt->execute(),
-            "message" => $stmt->execute() ? "Cập nhật sản phẩm thành công" : "Lỗi khi cập nhật: " . $stmt->error
+            "success" => $success,
+            "message" => $success ? "Cập nhật sản phẩm thành công" : "Lỗi khi cập nhật: " . $stmt->error
         ]);
         break;
 
