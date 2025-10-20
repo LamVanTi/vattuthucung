@@ -1,5 +1,4 @@
 <?php
-// header.php
 // Bắt đầu session nếu chưa có
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -22,20 +21,20 @@ if (session_status() === PHP_SESSION_NONE) {
     </a>
   </nav>
 
-  <!-- Search bar + Login -->
+  <!-- Search + User -->
   <div style="display:flex; gap:10px; align-items:center;">
     <input type="text" placeholder="Tìm kiếm sản phẩm..." 
            style="padding:5px 10px; border-radius:20px; border:none; outline:none; width:200px;">
     <button style="padding:5px 10px; border:none; border-radius:20px; background:#fff; color:#FF69B4; cursor:pointer;">🔍</button>
 
     <?php if (isset($_SESSION['user'])): ?>
-      <!-- Hiển thị khi đã đăng nhập -->
-      <div style="color:#fff; font-weight:500; display:flex; align-items:center; gap:10px;">
-        Xin chào, 
+      <!-- Khi đã đăng nhập -->
+      <div style="display:flex; align-items:center; gap:10px; color:#fff;">
+        <i class="fa-solid fa-user-circle fa-lg"></i>
         <span style="font-weight:bold;">
-          <?php echo htmlspecialchars($_SESSION['user']['ho_ten'] ?? $_SESSION['user']['name']); ?>
+          <?= htmlspecialchars($_SESSION['user']['ho_ten'] ?? $_SESSION['user']['name']); ?>
         </span>
-        <a href="index.php" 
+        <a href="logout.php" 
            style="color:#fff; text-decoration:none; font-weight:bold; padding:5px 10px; border:1px solid #fff; border-radius:20px; transition:0.3s;"
            onmouseover="this.style.background='#fff';this.style.color='#FF69B4';"
            onmouseout="this.style.background='transparent';this.style.color='#fff';">
@@ -43,7 +42,7 @@ if (session_status() === PHP_SESSION_NONE) {
         </a>
       </div>
     <?php else: ?>
-      <!-- Hiển thị khi chưa đăng nhập -->
+      <!-- Khi chưa đăng nhập -->
       <a href="login.php" 
          style="color:#fff; text-decoration:none; font-weight:bold; padding:5px 10px; border:1px solid #fff; border-radius:20px; transition:0.3s;"
          onmouseover="this.style.background='#fff';this.style.color='#FF69B4';"
